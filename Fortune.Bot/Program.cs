@@ -40,6 +40,7 @@ class Program
 
         Console.WriteLine("Bot is running...");
         Console.ReadLine();
+        Console.WriteLine("Bot is shutting down...");
 
         await _cts.CancelAsync();
     }
