@@ -19,4 +19,9 @@ RUN dotnet publish "Fortune.Bot.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Create the data directory inside the container
+RUN mkdir -p /app/data
+
+# Set the entry point for the application
 ENTRYPOINT ["dotnet", "Fortune.Bot.dll"]

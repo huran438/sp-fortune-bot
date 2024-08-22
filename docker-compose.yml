@@ -1,0 +1,10 @@
+﻿version: '3.8'
+
+services:
+  fortune-bot:
+    image: sp-fortune-bot
+    container_name: fortune-bot
+    build: ./Fortune.Bot/
+    volumes:
+      - ./fortune-data:/app/data
+    restart: always

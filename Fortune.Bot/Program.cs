@@ -16,6 +16,7 @@ class Program
     private static List<Participant> _manualWinners = new();
     private static BotSettings _settings;
     private static bool _manualSelectionMode;
+    private static bool _shutdown;
 
     static async Task Main()
     {
@@ -39,7 +40,12 @@ class Program
         await LoadParticipants();
 
         Console.WriteLine("Bot is running...");
-        Console.ReadLine();
+
+        while (!_shutdown)
+        {
+            await Task.Yield();
+        }
+
         Console.WriteLine("Bot is shutting down...");
 
         await _cts.CancelAsync();
@@ -76,6 +82,10 @@ class Program
                 if (message.Text.StartsWith("/draw"))
                 {
                     await DrawWinnersAndNotifyParticipants(message.Chat.Id);
+                }
+                else if (message.Text.StartsWith("/shutdown"))
+                {
+                    _shutdown = true;
                 }
                 else if (message.Text.StartsWith("/reset"))
                 {
@@ -404,9 +414,9 @@ class Program
 
     private static async Task LoadSettings()
     {
-        if (File.Exists("settings.json"))
+        if (File.Exists("./data/settings.json"))
         {
-            var json = await File.ReadAllTextAsync("settings.json");
+            var json = await File.ReadAllTextAsync("./data/settings.json");
             _settings = JsonSerializer.Deserialize<BotSettings>(json) ?? new BotSettings();
         }
         else
@@ -420,7 +430,7 @@ class Program
     {
         var options = new JsonSerializerOptions { WriteIndented = true };
         var json = JsonSerializer.Serialize(_settings, options);
-        await File.WriteAllTextAsync("settings.json", json);
+        await File.WriteAllTextAsync("./data/settings.json", json);
     }
 
     private static async Task SendAdminCommands(long chatId)
